@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 Created on Wed Oct 26 14:09:17 2016
-
+This program bins drifter velocity statistics with mean and standard deviation.
+It looks for a file called "Flist.csv" with ids of interest and expects input in "data4" subdirectory.
 @author:xiaojian
 """
 # -*- coding: utf-8 -*-
 import numpy as np
-#from pydap.client import open_url
 import matplotlib.pyplot as plt
 from SeaHorseLib import *
 from datetime import *
-#from scipy import interpolate
 import sys
 from SeaHorseTide import *
 import shutil
@@ -19,11 +18,11 @@ import matplotlib.cm as cm
 
 #HARDCODES
 gridsize=0.1
+minlon=-70.75;maxlon=-70.0;minlat=41.63;maxlat=42.12 # geographic box of interest
 
 def sh_bindata(x, y, z, xbins, ybins):
     """
     Bin irregularly spaced data on a rectangular grid.
-
     """
     ix=np.digitize(x,xbins)
     iy=np.digitize(y,ybins)
@@ -74,9 +73,9 @@ for k in range(len(FNs)):
     udti=Z['udti'];vdti=Z['vdti'];
     '''
     tdh=Z['tdh'];londh=Z['londh'];latdh=Z['latdh'];
-    udh=Z['udh'];vdh=Z['vdh'];
+    udh=Z['udh'];vdh=Z['vdh']; #hourly velocities?
     tgap=Z['tgap'];flag=Z['flag'];
-    udm=Z['udm'];vdm=Z['vdm'];
+    udm=Z['udm'];vdm=Z['vdm']; #modeled velocities?
     udti=Z['udti'];vdti=Z['vdti'];
     Z.close()
     
@@ -101,8 +100,8 @@ th=th[i]
 x=lonh
 y=lath
   
-xi = np.arange(-70.75,-70.00,gridsize)
-yi = np.arange(41.63,42.12,gridsize)
+xi = np.arange(minlon,maxlon,gridsize)
+yi = np.arange(minlat,maxlat,gridsize)
 
 xb,yb,ub_mean,ub_median,ub_std,ub_num = sh_bindata(x, y, u, xi, yi)
 xb,yb,vb_mean,vb_median,vb_std,vb_num = sh_bindata(x, y, v, xi, yi)
